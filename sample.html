@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message List</title>
+</head>
+<body>
+    <h1>Message List</h1>
+    <h2>{% for message in list %}</h2>
+            <a href="{{ url_for('single_message', message_id=message.key.id() ) }}"><h3>{{ message.title }}</h3></a>
+        {% endfor %}
+</body>
+</html>
