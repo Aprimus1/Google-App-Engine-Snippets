@@ -1,0 +1,45 @@
+#----- Store data in Datastore ---------------
+
+class ResultHandler(BaseHandler):
+    @login_required
+    def get(self):
+
+        return self.render_template('result.html')
+
+    def post(self):
+        user = users.get_current_user()
+        message = Message(parent=ndb.Key('User', user.nickname()))
+        if user:
+            message.author = user
+        message.title = self.request.get('title')
+        message.content = self.request.get('vnos')
+        message.put()
+        self.redirect('message_list')
+
+#----------- Retrieve Data from datastore as list----------------
+
+class MessageLists(BaseHandler):
+    def get(self):
+        user = users.get_current_user()
+        ancestor_key = ndb.Key('User', user.nickname())
+        list = Message.query(ancestor=ancestor_key)
+        template_context = {
+            'list': list
+        }
+        return self.render_template('list.html', template_context)
+
+
+#---------- Retrieve a single message by ancestor_key ------------
+
+class SingleMessage(BaseHandler):
+    def get(self, message_id):
+        user = users.get_current_user()
+        ancestor_key = ndb.Key('User', user.nickname())
+        message = Message.get_by_id(int(message_id),parent=ancestor_key)
+        template_context = {
+            'message': message,
+        }
+        return self.render_template('single_message.html', template_context)
+        
+        
+#------ TODO : ADD CLASS METHODS FOR RETRIEVE AND PUT DATA TO AVOID  CODE REPETITION ----
