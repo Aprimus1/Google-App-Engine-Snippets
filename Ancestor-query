@@ -1,3 +1,14 @@
+import os
+import webapp2
+from webapp2_extras.appengine.users import login_required
+from google.appengine.api import users
+import jinja2
+from models import Message
+from google.appengine.ext import ndb
+
+
+
+
 #----- Store data in Datastore ---------------
 
 class ResultHandler(BaseHandler):
@@ -40,6 +51,13 @@ class SingleMessage(BaseHandler):
             'message': message,
         }
         return self.render_template('single_message.html', template_context)
+
+app = webapp2.WSGIApplication([
+    webapp2.Route('/', MainHandler),
+    webapp2.Route('/result', ResultHandler, name='result'),
+    webapp2.Route('/message_list', handler=MessageLists, name='message_list'),
+    webapp2.Route('/message/<message_id:\d+>', handler=SingleMessage, name='single_message'),
+], debug=True)
         
         
 #------ TODO : ADD CLASS METHODS FOR RETRIEVE AND PUT DATA TO AVOID  CODE REPETITION ----
