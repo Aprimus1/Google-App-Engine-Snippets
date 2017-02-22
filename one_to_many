@@ -1,0 +1,38 @@
+class Contact(db.Model):
+
+    # Basic info.
+    name = db.StringProperty()
+    birth_day = db.DateProperty()
+
+    # Address info.
+    address = db.PostalAddressProperty()
+
+    # The original phone_number property has been replaced by
+    # an implicitly created property called 'phone_numbers'.
+
+    # Company info.
+    company_title = db.StringProperty()
+    company_name = db.StringProperty()
+    company_description = db.StringProperty()
+    company_address = db.PostalAddressProperty()
+
+class PhoneNumber(db.Model):
+    contact = db.ReferenceProperty(Contact,
+                                   collection_name='phone_numbers')
+    phone_type = db.StringProperty(
+        choices=('home', 'work', 'fax', 'mobile', 'other'))
+    number = db.PhoneNumberProperty()
+    
+    
+scott = Contact(name='Scott')
+scott.put()
+PhoneNumber(contact=scott,
+            phone_type='home',
+            number='(650) 555 - 2200').put()
+PhoneNumber(contact=scott,
+            phone_type='mobile',
+            number='(650) 555 - 2201').put()
+            
+scott.phone_numbers.filter('phone_type =', 'home')
+
+scott.phone_numbers.filter('phone_type =', 'home').get().delete()
